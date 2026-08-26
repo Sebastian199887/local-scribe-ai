@@ -16,7 +16,7 @@ app.get('/api/health', (req, res) => {
   res.json({ status: 'online', ollama: OLLAMA_HOST });
 });
 
-// PDF Processing and AI extraction endpoint
+// PDF Processing and Structured AI extraction endpoint
 app.post('/api/process', upload.single('file'), async (req, res) => {
   try {
     if (!req.file) {
@@ -27,25 +27,41 @@ app.post('/api/process', upload.single('file'), async (req, res) => {
     const pdfData = await pdfParse(req.file.buffer);
     const extractedText = pdfData.text;
 
-    // Call local Ollama instance
-    const prompt = `Extract key structured information (like dates, names, totals, and a brief summary) from the following document text:\n\n${extractedText}`;
-    
+    // Craft a prompt forcing strict JSON output
+    const prompt = `You are an expert document extraction engine. Analyze the following document text and extract the key information into valid JSON format with these exact keys: 
+    - "vendor": (string, name of company or sender)
+    - "document_type": (string, e.g., Invoice, Contract, Receipt, Report)
+    - "date": (string, document date if found)
+    - "total_amount": (string, total price or value if found, with currency)
+    - "summary": (string, a brief 2-3 sentence summary of the document)
+
+    Document Text:
+    ${extractedText}`;
+
     const ollamaResponse = await fetch(`${OLLAMA_HOST}/api/generate`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         model: 'llama3',
         prompt: prompt,
+        format: 'json',
         stream: false
       })
     });
 
     const aiData = await ollamaResponse.json();
+    
+    let structuredData;
+    try {
+      structuredData = JSON.parse(aiData.response);
+    } catch (parseError) {
+      structuredData = { summary: aiData.response };
+    }
 
     res.json({
       success: true,
       filename: req.file.originalname,
-      summary: aiData.response || 'No response generated from local model.'
+      data: structuredData
     });
 
   } catch (error) {

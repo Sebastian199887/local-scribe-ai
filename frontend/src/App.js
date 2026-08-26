@@ -44,14 +44,14 @@ function App() {
 
   return (
     <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col items-center justify-center p-6">
-      <div className="max-w-xl w-full bg-slate-900 border border-slate-800 rounded-2xl shadow-2xl p-8">
+      <div className="max-w-2xl w-full bg-slate-900 border border-slate-800 rounded-2xl shadow-2xl p-8">
         <div className="text-center mb-8">
           <span className="bg-emerald-500/10 text-emerald-400 text-xs font-semibold px-3 py-1 rounded-full uppercase tracking-wider">
             100% Local & Private
           </span>
           <h1 className="text-3xl font-bold mt-3 tracking-tight">LocalScribe AI</h1>
           <p className="text-slate-400 text-sm mt-1">
-            Secure, containerised document extraction powered by local AI.
+            Secure, structured document extraction powered by local LLMs.
           </p>
         </div>
 
@@ -63,7 +63,7 @@ function App() {
               onChange={handleFileChange}
               className="w-full text-sm text-slate-400 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-emerald-600 file:text-white hover:file:bg-emerald-500 cursor-pointer"
             />
-            <p className="text-xs text-slate-500 mt-2">Upload a PDF document to parse offline</p>
+            <p className="text-xs text-slate-500 mt-2">Upload a business document or invoice (PDF)</p>
           </div>
 
           {error && (
@@ -77,17 +77,42 @@ function App() {
             disabled={loading}
             className="w-full py-3 px-4 bg-emerald-600 hover:bg-emerald-500 text-white font-semibold rounded-xl transition shadow-lg disabled:opacity-50"
           >
-            {loading ? 'Processing Locally via AI...' : 'Analyze Document'}
+            {loading ? 'Extracting Structured Data...' : 'Analyze Document'}
           </button>
         </form>
 
         {result && (
-          <div className="mt-8 p-6 bg-slate-950 border border-slate-800 rounded-xl">
-            <h2 className="text-sm font-semibold uppercase tracking-wider text-emerald-400 mb-2">
-              Extraction Result: <span className="text-slate-300 font-normal">{result.filename}</span>
-            </h2>
-            <div className="bg-slate-900 p-4 rounded-lg text-slate-300 text-sm whitespace-pre-wrap leading-relaxed border border-slate-800/60">
-              {result.summary}
+          <div className="mt-8 space-y-6">
+            <div className="p-6 bg-slate-950 border border-slate-800 rounded-xl">
+              <h2 className="text-xs font-semibold uppercase tracking-wider text-emerald-400 mb-4">
+                Structured Extraction: <span className="text-slate-300 font-normal">{result.filename}</span>
+              </h2>
+
+              <div className="grid grid-cols-2 gap-4 mb-4">
+                <div className="bg-slate-900 p-3 rounded-lg border border-slate-800">
+                  <span className="text-xs text-slate-500 block">Vendor / Issuer</span>
+                  <span className="text-sm font-medium text-slate-200">{result.data.vendor || 'N/A'}</span>
+                </div>
+                <div className="bg-slate-900 p-3 rounded-lg border border-slate-800">
+                  <span className="text-xs text-slate-500 block">Document Type</span>
+                  <span className="text-sm font-medium text-slate-200">{result.data.document_type || 'N/A'}</span>
+                </div>
+                <div className="bg-slate-900 p-3 rounded-lg border border-slate-800">
+                  <span className="text-xs text-slate-500 block">Date</span>
+                  <span className="text-sm font-medium text-slate-200">{result.data.date || 'N/A'}</span>
+                </div>
+                <div className="bg-slate-900 p-3 rounded-lg border border-slate-800">
+                  <span className="text-xs text-slate-500 block">Total Amount</span>
+                  <span className="text-sm font-medium text-emerald-400">{result.data.total_amount || 'N/A'}</span>
+                </div>
+              </div>
+
+              <div className="bg-slate-900 p-4 rounded-lg border border-slate-800">
+                <span className="text-xs text-slate-500 block mb-1">Executive Summary</span>
+                <p className="text-slate-300 text-sm leading-relaxed">
+                  {result.data.summary || 'No summary provided.'}
+                </p>
+              </div>
             </div>
           </div>
         )}
