@@ -652,6 +652,19 @@ function App() {
       {/* Neon Glow Vignette Overlay */}
       <div className="fixed inset-0 bg-[radial-gradient(circle_at_center,transparent_0%,rgba(5,5,10,0.85)_100%)] pointer-events-none z-0"></div>
 
+      {/* DISCREET CYBER STAMP WITH SHC INITIALS (Fixed Bottom-Left Corner) */}
+      <div className="fixed bottom-4 left-4 z-50 flex items-center space-x-2 bg-[#0a0a12]/80 border border-[#00ffcc]/30 px-2.5 py-1.5 shadow-[0_0_12px_rgba(0,255,204,0.15)] backdrop-blur-md pointer-events-auto">
+        {/* Glowing mini cyber badge SVG icon */}
+        <svg className="w-4 h-4 text-[#ffee00] drop-shadow-[0_0_6px_#ffee00]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+          <polygon points="12 2 2 7 12 12 22 7 12 2"></polygon>
+          <polyline points="2 17 12 22 22 17"></polyline>
+          <polyline points="2 12 12 17 22 12"></polyline>
+        </svg>
+        <span className="text-[9px] font-black tracking-widest text-slate-300">
+          DEV // <span className="text-[#ffee00] drop-shadow-[0_0_6px_#ffee00]">SHC</span>
+        </span>
+      </div>
+
       {/* Scoreboard (Visible only when game is activated) */}
       {gameActive && (
         <div className="fixed top-5 right-6 z-50 bg-[#0a0a12]/90 border border-[#ff0055] px-4 py-2 shadow-[0_0_20px_rgba(255,0,85,0.4)] backdrop-blur-md flex items-center space-x-3 animate-fade-in">
