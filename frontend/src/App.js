@@ -27,8 +27,11 @@ function App() {
     formData.append('file', file);
     formData.append('model', model);
 
+    // Explicitly target your server IP and port 5001
+    const apiBaseUrl = 'http://192.168.1.14:5001';
+
     try {
-      const response = await fetch('http://localhost:5001/api/process', {
+      const response = await fetch(`${apiBaseUrl}/api/process`, {
         method: 'POST',
         body: formData,
       });
@@ -82,7 +85,7 @@ function App() {
               onChange={handleFileChange}
               className="w-full text-sm text-slate-400 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-emerald-600 file:text-white hover:file:bg-emerald-500 cursor-pointer"
             />
-            <p className="text-xs text-slate-500 mt-2">Upload a business document or invoice (PDF)</p>
+            <p className="text-xs text-slate-500 mt-2">Upload a resume or business document (PDF)</p>
           </div>
 
           {error && (
@@ -131,12 +134,25 @@ function App() {
                 </div>
               </div>
 
-              <div className="bg-slate-900 p-4 rounded-lg border border-slate-800">
+              <div className="bg-slate-900 p-4 rounded-lg border border-slate-800 mb-4">
                 <span className="text-xs text-slate-500 block mb-1">Executive Summary</span>
                 <p className="text-slate-300 text-sm leading-relaxed">
                   {result.data.summary || 'No summary provided.'}
                 </p>
               </div>
+
+              {result.data.key_skills && result.data.key_skills.length > 0 && (
+                <div className="bg-slate-900 p-4 rounded-lg border border-slate-800">
+                  <span className="text-xs text-slate-500 block mb-2">Key Highlights / Skills</span>
+                  <div className="flex flex-wrap gap-2">
+                    {result.data.key_skills.map((skill, index) => (
+                      <span key={index} className="bg-emerald-500/10 border border-emerald-500/20 text-emerald-300 text-xs px-2.5 py-1 rounded-md">
+                        {skill}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              )}
             </div>
           </div>
         )}

@@ -1,11 +1,9 @@
-version: '3.8'
-
 services:
   ollama:
     image: ollama/ollama:latest
     container_name: local-scribe-ollama
     ports:
-      - "11434:11434"
+      - "0.0.0.0:11434:11434"
     volumes:
       - ollama_data:/root/.ollama
     restart: unless-stopped
@@ -14,7 +12,7 @@ services:
     build: ./backend
     container_name: local-scribe-backend
     ports:
-      - "5001:5001"
+      - "0.0.0.0:5001:5001"
     environment:
       - OLLAMA_HOST=http://ollama:11434
     depends_on:
@@ -25,7 +23,7 @@ services:
     build: ./frontend
     container_name: local-scribe-frontend
     ports:
-      - "3000:3000"
+      - "0.0.0.0:3000:3000"
     depends_on:
       - backend
     restart: unless-stopped
