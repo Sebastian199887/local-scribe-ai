@@ -16,12 +16,15 @@ app.get('/api/health', (req, res) => {
   res.json({ status: 'online', ollama: OLLAMA_HOST });
 });
 
-// PDF Processing and Structured AI extraction endpoint
+// PDF Processing and Structured AI extraction endpoint with dynamic model choice
 app.post('/api/process', upload.single('file'), async (req, res) => {
   try {
     if (!req.file) {
       return res.status(400).json({ error: 'No file uploaded' });
     }
+
+    // Get selected model from request body or default to llama3
+    const selectedModel = req.body.model || 'llama3';
 
     // Extract text from uploaded PDF
     const pdfData = await pdfParse(req.file.buffer);
@@ -42,7 +45,7 @@ app.post('/api/process', upload.single('file'), async (req, res) => {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        model: 'llama3',
+        model: selectedModel,
         prompt: prompt,
         format: 'json',
         stream: false
@@ -61,6 +64,7 @@ app.post('/api/process', upload.single('file'), async (req, res) => {
     res.json({
       success: true,
       filename: req.file.originalname,
+      model_used: selectedModel,
       data: structuredData
     });
 

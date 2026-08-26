@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 
 function App() {
   const [file, setFile] = useState(null);
+  const [model, setModel] = useState('llama3');
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState(null);
   const [error, setError] = useState(null);
@@ -24,6 +25,7 @@ function App() {
 
     const formData = new FormData();
     formData.append('file', file);
+    formData.append('model', model);
 
     try {
       const response = await fetch('http://localhost:5001/api/process', {
@@ -56,6 +58,23 @@ function App() {
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-6">
+          {/* Model Selector */}
+          <div>
+            <label className="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-2">
+              Select Local AI Model
+            </label>
+            <select
+              value={model}
+              onChange={(e) => setModel(e.target.value)}
+              className="w-full bg-slate-950 border border-slate-700 rounded-xl p-3 text-sm text-slate-200 focus:outline-none focus:border-emerald-500 transition-colors"
+            >
+              <option value="llama3">Llama 3 (Balanced & Accurate)</option>
+              <option value="mistral">Mistral 7B (Fast & Efficient)</option>
+              <option value="phi3">Phi-3 (Ultra-Lightweight)</option>
+            </select>
+          </div>
+
+          {/* File Upload Box */}
           <div className="border-2 border-dashed border-slate-700 hover:border-emerald-500 transition-colors rounded-xl p-6 text-center bg-slate-950/50 cursor-pointer">
             <input
               type="file"
@@ -77,16 +96,21 @@ function App() {
             disabled={loading}
             className="w-full py-3 px-4 bg-emerald-600 hover:bg-emerald-500 text-white font-semibold rounded-xl transition shadow-lg disabled:opacity-50"
           >
-            {loading ? 'Extracting Structured Data...' : 'Analyze Document'}
+            {loading ? `Extracting via ${model}...` : 'Analyze Document'}
           </button>
         </form>
 
         {result && (
           <div className="mt-8 space-y-6">
             <div className="p-6 bg-slate-950 border border-slate-800 rounded-xl">
-              <h2 className="text-xs font-semibold uppercase tracking-wider text-emerald-400 mb-4">
-                Structured Extraction: <span className="text-slate-300 font-normal">{result.filename}</span>
-              </h2>
+              <div className="flex justify-between items-center mb-4">
+                <h2 className="text-xs font-semibold uppercase tracking-wider text-emerald-400">
+                  Structured Extraction: <span className="text-slate-300 font-normal">{result.filename}</span>
+                </h2>
+                <span className="bg-slate-900 border border-slate-800 text-slate-400 text-xs px-2.5 py-1 rounded-md">
+                  Model: <strong className="text-emerald-400">{result.model_used}</strong>
+                </span>
+              </div>
 
               <div className="grid grid-cols-2 gap-4 mb-4">
                 <div className="bg-slate-900 p-3 rounded-lg border border-slate-800">
