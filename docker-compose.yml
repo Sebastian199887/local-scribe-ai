@@ -3,7 +3,7 @@ version: '3.8'
 services:
   ollama:
     image: ollama/ollama:latest
-    container_name: scribe_ollama
+    container_name: local-scribe-ollama
     ports:
       - "11434:11434"
     volumes:
@@ -12,7 +12,7 @@ services:
 
   backend:
     build: ./backend
-    container_name: scribe_backend
+    container_name: local-scribe-backend
     ports:
       - "5001:5001"
     environment:
@@ -23,9 +23,9 @@ services:
 
   frontend:
     build: ./frontend
-    container_name: scribe_frontend
+    container_name: local-scribe-frontend
     ports:
-      - "3001:3000"
+      - "3000:3000"
     depends_on:
       - backend
     restart: unless-stopped
